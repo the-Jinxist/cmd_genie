@@ -5,12 +5,14 @@ package ui
 
 import (
 	"fmt"
-	"strings"
+	"log"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/the-Jinxist/cmd_genie/config"
+	"github.com/the-Jinxist/cmd_genie/internal/chat_client"
 )
 
 type (
@@ -18,10 +20,10 @@ type (
 )
 
 type model struct {
-	textInput textinput.Model
-	err       error
-	loading   bool
-	spinner   spinner.Model
+	textInput        textinput.Model
+	err              error
+	loading, success bool
+	spinner          spinner.Model
 }
 
 func InitialModel() model {
@@ -56,18 +58,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
 		case tea.KeyEnter:
-			fmt.Println(strings.ToUpper(m.textInput.Value()))
 
-			// client := chat_client.NewClient(config.GetGeminiAPIKey())
 			// fmt.Println(fmt.Sprintf("\n \n Your API KEY: %s", client.APIKey))
+			prompt := m.textInput.Value()
 			m.loading = true
+			m.success = false
 
-			return m, nil
+			return m, makeAPICall(prompt)
 		}
 
 	// We handle errors just like any other message
 	case errMsg:
 		m.err = msg
+		m.loading = false
+		return m, nil
+	case successMsg:
+		m.success = true
 		return m, nil
 	}
 
@@ -92,5 +98,26 @@ func (m model) View() string {
 		initStr += fmt.Sprintf("\nChecking the matrix to find your command.. %s", m.spinner.View())
 	}
 
+	if m.success {
+		initStr += "\nSuccessfully got command"
+	}
+
 	return initStr
+}
+
+type successMsg int
+
+func makeAPICall(prompt string) tea.Cmd {
+
+	return func() tea.Msg {
+		client := chat_client.NewClient(config.GetGeminiAPIKey())
+		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
+		if resp != nil {
+			log.Default().Printf("Logger: %v\n", resp)
+			return successMsg(len(resp.Candidates))
+		}
+
+		return errMsg(err)
+	}
+
 }

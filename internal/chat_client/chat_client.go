@@ -54,8 +54,9 @@ func (c client) req(method string, url string, body interface{}, response interf
 
 	reqUrl, _ := c.BaseUrl.Parse(url)
 	req, _ := http.NewRequest(method, reqUrl.String(), reqBody)
-
 	req.Header.Set("Content-Type", "application/json")
+
+	// fmt.Printf("reqUrl: %s, reqBody: %s, reqBody: %v\n", reqUrl, reqBody, req.Header)
 	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {

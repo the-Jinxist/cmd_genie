@@ -51,7 +51,7 @@ type UsageMetadata struct {
 	TotalTokenCount      int `json:"totalTokenCount"`
 }
 
-func (c ChatCompletion) getChatCompletion(prompt string) (*GeminiResponse, error) {
+func (c ChatCompletion) GetChatCompletion(prompt string) (*GeminiResponse, error) {
 
 	//TODO: CHECK IF YOU CAN DETECT THE KIND OF OS IS IT
 	url := fmt.Sprintf("v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s", c.client.APIKey)

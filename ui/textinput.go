@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/the-Jinxist/cmd_genie/config"
-	"github.com/the-Jinxist/cmd_genie/internal/chat_client"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type (
@@ -20,27 +20,35 @@ type (
 type model struct {
 	textInput textinput.Model
 	err       error
+	loading   bool
+	spinner   spinner.Model
 }
 
 func InitialModel() model {
+
 	ti := textinput.New()
 	ti.Placeholder = "Command to copy text"
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
 
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+
 	return model{
 		textInput: ti,
+		spinner:   s,
 		err:       nil,
 	}
 }
 
 func (m model) Init() tea.Cmd {
-	return textinput.Blink
+	return tea.Batch(textinput.Blink, m.spinner.Tick)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
+	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -50,10 +58,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter:
 			fmt.Println(strings.ToUpper(m.textInput.Value()))
 
-			client := chat_client.NewClient(config.GetGeminiAPIKey())
-			fmt.Println(fmt.Sprintf("\n \n Your API KEY: %s", client.APIKey))
+			// client := chat_client.NewClient(config.GetGeminiAPIKey())
+			// fmt.Println(fmt.Sprintf("\n \n Your API KEY: %s", client.APIKey))
+			m.loading = true
 
-			return m, tea.Quit
+			return m, nil
 		}
 
 	// We handle errors just like any other message
@@ -62,14 +71,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
+	var cmd tea.Cmd
 	m.textInput, cmd = m.textInput.Update(msg)
-	return m, cmd
+
+	cmds = append(cmds, cmd)
+	m.spinner, cmd = m.spinner.Update(msg)
+	cmds = append(cmds, cmd)
+
+	return m, tea.Batch(cmds...)
 }
 
 func (m model) View() string {
-	return fmt.Sprintf(
+	initStr := fmt.Sprintf(
 		"You need a command to do what?\n\n%s\n\n%s",
 		m.textInput.View(),
 		"(esc to quit)",
 	) + "\n"
+
+	if m.loading {
+		initStr += fmt.Sprintf("\nChecking the matrix to find your command.. %s", m.spinner.View())
+	}
+
+	return initStr
 }

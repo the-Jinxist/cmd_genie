@@ -25,7 +25,7 @@ type Client struct {
 	// Subscription     *Subscription
 }
 
-const BASE_URL = "https://api.openai.com/"
+const BASE_URL = "https://generativelanguage.googleapis.com/"
 
 func NewClient(apiKey string) *Client {
 	httpClient := &http.Client{
@@ -53,11 +53,10 @@ func (c Client) req(method string, url string, body interface{}, response interf
 	}
 
 	reqUrl, _ := c.BaseUrl.Parse(url)
-
 	req, _ := http.NewRequest(method, reqUrl.String(), reqBody)
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
+	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("error processing request - %+v", err)

@@ -63,7 +63,7 @@ func (c ChatCompletion) getChatCompletion(prompt string) (*GeminiResponse, error
 						Text: prompt,
 					},
 					{
-						Text: "You're a CLI savant with experience in naviagting CLIs on all operating system. Please provide succintly the command related to what the prompt needs",
+						Text: "You're a CLI savant with experience in naviagting CLIs on all operating system. Please provide succintly the cli command related to what the prompt needs",
 					},
 				},
 			},

@@ -1,4 +1,4 @@
-package chatgpt
+package chat_client
 
 import (
 	"fmt"
@@ -6,11 +6,11 @@ import (
 )
 
 type ChatCompletion struct {
-	client *Client
+	client *client
 }
 
 // newSubscription returns a new Subscription.
-func newChatCompletion(client *Client) *ChatCompletion {
+func newChatCompletion(client *client) *ChatCompletion {
 	return &ChatCompletion{
 		client: client,
 	}

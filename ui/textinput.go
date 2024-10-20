@@ -5,9 +5,12 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/the-Jinxist/cmd_genie/config"
+	"github.com/the-Jinxist/cmd_genie/internal/chat_client"
 )
 
 type (
@@ -42,7 +45,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
-		case tea.KeyEnter, tea.KeyCtrlC, tea.KeyEsc:
+		case tea.KeyCtrlC, tea.KeyEsc:
+			return m, tea.Quit
+		case tea.KeyEnter:
+			fmt.Println(strings.ToUpper(m.textInput.Value()))
+
+			client := chat_client.NewClient(config.GetGeminiAPIKey())
+			fmt.Println(fmt.Sprintf("\n \n Your API KEY: %s", client.APIKey))
+
 			return m, tea.Quit
 		}
 

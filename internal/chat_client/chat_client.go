@@ -1,4 +1,4 @@
-package chatgpt
+package chat_client
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type Client struct {
+type client struct {
 	APIKey     string
 	HttpClient *http.Client
 	log        *slog.Logger
@@ -27,7 +27,7 @@ type Client struct {
 
 const BASE_URL = "https://generativelanguage.googleapis.com/"
 
-func NewClient(apiKey string) *Client {
+func NewClient(apiKey string) *client {
 	httpClient := &http.Client{
 		Timeout: 5 * time.Second,
 	}
@@ -35,12 +35,12 @@ func NewClient(apiKey string) *Client {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	parsedUrl, _ := url.Parse(BASE_URL)
-	c := &Client{APIKey: apiKey, HttpClient: httpClient, log: logger, BaseUrl: parsedUrl}
+	c := &client{APIKey: apiKey, HttpClient: httpClient, log: logger, BaseUrl: parsedUrl}
 	c.ChatCompletion = newChatCompletion(c)
 	return c
 }
 
-func (c Client) req(method string, url string, body interface{}, response interface{}) error {
+func (c client) req(method string, url string, body interface{}, response interface{}) error {
 
 	var reqBody *bytes.Buffer
 	if body != nil {

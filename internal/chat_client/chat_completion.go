@@ -3,6 +3,7 @@ package chat_client
 import (
 	"fmt"
 	"net/http"
+	"runtime"
 )
 
 type ChatCompletion struct {
@@ -53,7 +54,9 @@ type UsageMetadata struct {
 
 func (c ChatCompletion) GetChatCompletion(prompt string) (*GeminiResponse, error) {
 
-	//TODO: CHECK IF YOU CAN DETECT THE KIND OF OS IS IT
+	os := runtime.GOOS
+	primer := fmt.Sprintf("You're a CLI savant with experience in naviagting CLIs on all operating system. Please provide succintly the cli command related to what the prompt needs. The OS is %s", os)
+
 	url := fmt.Sprintf("v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s", c.client.APIKey)
 	body := GeminiRequest{
 		Contents: []Contents{
@@ -63,7 +66,7 @@ func (c ChatCompletion) GetChatCompletion(prompt string) (*GeminiResponse, error
 						Text: prompt,
 					},
 					{
-						Text: "You're a CLI savant with experience in naviagting CLIs on all operating system. Please provide succintly the cli command related to what the prompt needs",
+						Text: primer,
 					},
 				},
 			},

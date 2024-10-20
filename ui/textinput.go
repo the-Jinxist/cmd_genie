@@ -24,6 +24,7 @@ type model struct {
 	err              error
 	loading, success bool
 	spinner          spinner.Model
+	completion       string
 }
 
 func InitialModel() model {
@@ -63,6 +64,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			prompt := m.textInput.Value()
 			m.loading = true
 			m.success = false
+			m.completion = ""
 
 			return m, makeAPICall(prompt)
 		}
@@ -74,7 +76,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case successMsg:
 		m.success = true
-		return m, nil
+		m.completion = string(msg)
+		return m, tea.Quit
 	}
 
 	var cmd tea.Cmd
@@ -99,13 +102,18 @@ func (m model) View() string {
 	}
 
 	if m.success {
-		initStr += "\nSuccessfully got command"
+
+		style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#ffffff")).Background(lipgloss.Color("#89CFF0"))
+		res := fmt.Sprintf("Best suggestion: %s", m.completion)
+
+		renderedRes := style.Render(res)
+		initStr += "\n" + renderedRes
 	}
 
 	return initStr
 }
 
-type successMsg int
+type successMsg string
 
 func makeAPICall(prompt string) tea.Cmd {
 
@@ -114,7 +122,18 @@ func makeAPICall(prompt string) tea.Cmd {
 		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
 		if resp != nil {
 			log.Default().Printf("Logger: %v\n", resp)
-			return successMsg(len(resp.Candidates))
+			if len(resp.Candidates) == 0 {
+				return successMsg("nothing to show")
+			}
+
+			cand := resp.Candidates[0]
+			if len(cand.Content.Parts) == 0 {
+				return successMsg("nothing to show")
+			}
+
+			completion := cand.Content.Parts[0].Text
+			return successMsg(completion)
+
 		}
 
 		return errMsg(err)

@@ -44,3 +44,12 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+# Same repo deployment
+brews:
+    - github:
+          owner: the-Jinxist
+          name: homebrew-genie
+      folder: Formula
+      homepage: https://github.com/the-Jinxist/genie
+      description: Source code for a CLI app that provides command suggestions.

@@ -15,9 +15,10 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cmd_genie",
-	Short: "This application helps to find CLI commands that user's need",
-	Long:  `It's simple you ask me for a command you can't seem to remember and I'll give you the closest suggestion`,
+	Use:     "cmd_genie",
+	Aliases: []string{"genie"},
+	Short:   "This application helps to find CLI commands that user's need",
+	Long:    `It's simple you ask me for a command you can't seem to remember and I'll give you the closest suggestion`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to your Command-Line Genie!")
 

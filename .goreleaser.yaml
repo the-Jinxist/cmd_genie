@@ -47,9 +47,20 @@ changelog:
 
 # Same repo deployment
 brews:
-    - github:
-          owner: the-Jinxist
-          name: homebrew-genie
-      folder: Formula
-      homepage: https://github.com/the-Jinxist/genie
-      description: Source code for a CLI app that provides command suggestions.
+  - 
+
+
+    name: genie
+    folder: Formula
+    description: "CLI app to suggest prompted commands"
+    homepage: "https://github.com/the-Jinxist/cmd_genie"
+    commit_author:
+      name: Favour
+      email: nerosilva522@gmail.com
+    repository:
+      owner: the-Jinxist
+      name: genie
+      branch: brew-releases/{{ .Version }}
+      token: "{{ .Env.GITHUB_TOKEN }}"
+      git:
+        url: 'https://github.com/the-Jinxist/genie.git'

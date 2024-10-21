@@ -51,7 +51,7 @@ brews:
 
 
     name: genie
-    folder: Formula
+    # folder: Formula
     description: "CLI app to suggest prompted commands"
     homepage: "https://github.com/the-Jinxist/cmd_genie"
     commit_author:

@@ -5,7 +5,6 @@ package ui
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -32,8 +31,8 @@ func InitialModel() model {
 	ti := textinput.New()
 	ti.Placeholder = "Command to copy text"
 	ti.Focus()
-	ti.CharLimit = 156
-	ti.Width = 20
+	ti.CharLimit = 300
+	ti.Width = 300
 
 	s := spinner.New()
 	s.Spinner = spinner.Dot
@@ -107,7 +106,7 @@ func (m model) View() string {
 		res := fmt.Sprintf("Best suggestion: %s", m.completion)
 
 		renderedRes := style.Render(res)
-		initStr += "\n" + renderedRes
+		initStr += "\n" + renderedRes + "\n"
 	}
 
 	return initStr
@@ -120,20 +119,22 @@ func makeAPICall(prompt string) tea.Cmd {
 	return func() tea.Msg {
 		client := chat_client.NewClient(config.GetGeminiAPIKey())
 		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
+
+		emptyState := successMsg("No command found in the matrix. please try a better prompt")
 		if resp != nil {
-			log.Default().Printf("Logger: %v\n", resp)
 			if len(resp.Candidates) == 0 {
-				return successMsg("nothing to show")
+
+				return emptyState
 			}
 
 			cand := resp.Candidates[0]
 			if len(cand.Content.Parts) == 0 {
-				return successMsg("nothing to show")
+
+				return emptyState
 			}
 
 			completion := cand.Content.Parts[0].Text
 			return successMsg(completion)
-
 		}
 
 		return errMsg(err)

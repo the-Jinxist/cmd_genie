@@ -1,8 +1,6 @@
 package config
 
 import (
-	"os"
-
 	"github.com/spf13/viper"
 )
 
@@ -57,8 +55,6 @@ func LoadConfigs(path string) (Config, error) {
 
 		return config, err
 	} else {
-
-		println("apiKey: ", os.Getenv("GEMINI_API_KEY"), "environment: ", os.Getenv("ENVIRONMENT"), "-------------1")
 
 		config.ChatGPTApiKey = viper.GetString(ChatGPTApiKey)
 		config.GeminiAPIKey = viper.GetString(GeminiAPIKey)

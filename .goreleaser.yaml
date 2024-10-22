@@ -26,8 +26,8 @@ before:
 builds:
   # - binary: cmd_genie
   - env:
-      # - CGO_ENABLED=0
-      # - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
+      - CGO_ENABLED=0
+      - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
       - ENVIRONMENT="prod"
     goos:
       - linux

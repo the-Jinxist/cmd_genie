@@ -41,7 +41,7 @@ func LoadConfigs(path string) (Config, error) {
 
 	viper.AutomaticEnv()
 
-	if viper.GetString(EnvKey) != "prod" {
+	if viper.GetString(EnvKey) == "dev" {
 
 		err = viper.ReadInConfig()
 		if err != nil {

@@ -70,5 +70,5 @@ brews:
       branch: brew-releases/{{ .Version }}
       token: "{{ .Env.GITHUB_TOKEN }}"
       git:
-        url: 'https://github.com/the-Jinxist/cmd_genie.git'
+        url: 'https://github.com/the-Jinxist/homebrew-genie.git'
         private_key: '{{ .Env.PRIVATE_KEY_PATH }}'

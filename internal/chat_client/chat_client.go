@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -28,6 +30,11 @@ type client struct {
 const BASE_URL = "https://generativelanguage.googleapis.com/"
 
 func NewClient(apiKey string) *client {
+
+	if strings.TrimSpace(apiKey) == "" {
+		log.Fatalf("no api key installed")
+	}
+
 	httpClient := &http.Client{
 		Timeout: 5 * time.Second,
 	}

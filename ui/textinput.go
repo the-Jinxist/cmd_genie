@@ -75,6 +75,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case successMsg:
 		m.success = true
+		m.loading = false
 		m.completion = string(msg)
 		return m, tea.Quit
 	}
@@ -109,6 +110,14 @@ func (m model) View() string {
 		initStr += "\n" + renderedRes + "\n"
 	}
 
+	if m.err != nil {
+		style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#000000")).Background(lipgloss.Color("#FF5733"))
+		res := fmt.Sprintf("Best suggestion: %s", m.completion)
+
+		renderedRes := style.Render(res)
+		initStr += "\n" + renderedRes + "\n"
+	}
+
 	return initStr
 }
 
@@ -121,6 +130,10 @@ func makeAPICall(prompt string) tea.Cmd {
 		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
 
 		emptyState := successMsg("No command found in the matrix. please try a better prompt")
+		if err != nil {
+			return errMsg(err)
+		}
+
 		if resp != nil {
 			if len(resp.Candidates) == 0 {
 
@@ -137,7 +150,7 @@ func makeAPICall(prompt string) tea.Cmd {
 			return successMsg(completion)
 		}
 
-		return errMsg(err)
+		return emptyState
 	}
 
 }

@@ -55,9 +55,9 @@ brews:
     description: "CLI app to suggest prompted commands"
     homepage: "https://github.com/the-Jinxist/cmd_genie"
     skip_upload: false
-    tap:
-      owner: the-Jinxist
-      name: brew-genie
+    # tap:
+    #   owner: the-Jinxist
+    #   name: brew-genie
     commit_author:
       name: Favour
       email: nerosilva522@gmail.com

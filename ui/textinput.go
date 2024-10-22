@@ -10,7 +10,6 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/the-Jinxist/cmd_genie/config"
 	"github.com/the-Jinxist/cmd_genie/internal/chat_client"
 )
 
@@ -126,7 +125,7 @@ type successMsg string
 func makeAPICall(prompt string) tea.Cmd {
 
 	return func() tea.Msg {
-		client := chat_client.NewClient(config.GetGeminiAPIKey())
+		client := chat_client.NewClient("AIzaSyBWBfXVQEvW3SIgE0Ztl6EaxJVTwoTnko4")
 		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
 
 		emptyState := successMsg("No command found in the matrix. please try a better prompt")

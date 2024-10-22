@@ -9,8 +9,8 @@
 version: 2
 
 env:
-  - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
-  - ENVIRONMENT={{ .Env.ENVIRONMENT }}
+  - GEMINI_API_KEY= {{ .Env.GEMINI_API_KEY }}
+  - ENVIRONMENT="prod"
 
 before:
   hooks:
@@ -24,10 +24,11 @@ before:
 
 
 builds:
+  # - binary: cmd_genie
   - env:
-      - CGO_ENABLED=0
-      - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
-      - ENVIRONMENT={{ .Env.ENVIRONMENT }}
+      # - CGO_ENABLED=0
+      # - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
+      - ENVIRONMENT="prod"
     goos:
       - linux
       - windows

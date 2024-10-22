@@ -49,15 +49,13 @@ changelog:
 # Same repo deployment
 brews:
   - 
-
-
-    name: cmd_genie
+    name: ask-genie
     # folder: Formula
     description: "CLI app to suggest prompted commands"
     homepage: "https://github.com/the-Jinxist/cmd_genie"
     skip_upload: false
-    post_install: |
-        cmd_genie --help
+    # post_install: |
+    #     cmd_genie --help
     # tap:
     #   owner: the-Jinxist
     #   name: brew-genie
@@ -66,9 +64,8 @@ brews:
       email: nerosilva522@gmail.com
     repository:
       owner: the-Jinxist
-      name: homebrew-genie
+      name: brew-genie
       branch: main
       token: "{{ .Env.GITHUB_TOKEN }}"
       git:
-        url: 'https://github.com/the-Jinxist/homebrew-genie.git'
         private_key: '{{ .Env.PRIVATE_KEY_PATH }}'

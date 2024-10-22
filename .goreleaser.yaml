@@ -10,7 +10,7 @@ version: 2
 
 env:
   - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
-  - ENVIRONMENT=prod
+  - ENVIRONMENT={{ .Env.ENVIRONMENT }}
 
 before:
   hooks:
@@ -19,9 +19,15 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 
+    - echo {{ .Env.GEMINI_API_KEY }}
+    - echo {{ .Env.ENVIRONMENT }}
+
+
 builds:
   - env:
       - CGO_ENABLED=0
+      - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
+      - ENVIRONMENT={{ .Env.ENVIRONMENT }}
     goos:
       - linux
       - windows

@@ -18,6 +18,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+      - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
     goos:
       - linux
       - windows

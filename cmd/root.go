@@ -9,7 +9,9 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
+	"github.com/the-Jinxist/cmd_genie/config"
 	"github.com/the-Jinxist/cmd_genie/ui"
 )
 
@@ -20,7 +22,12 @@ var rootCmd = &cobra.Command{
 	Short:   "This application helps to find CLI commands that user's need",
 	Long:    `It's simple you ask me for a command you can't seem to remember and I'll give you the closest suggestion`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome to your Command-Line Genie!")
+		if config.GetEnv() == "prod" {
+			style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#ffffff")).Border(lipgloss.DoubleBorder(), true)
+			fmt.Println(style.Render("Welcome to your Command-Line Genie!"))
+		} else {
+			fmt.Println("Welcome to your Command-Line Genie!")
+		}
 
 		p := tea.NewProgram(ui.InitialModel())
 		if _, err := p.Run(); err != nil {

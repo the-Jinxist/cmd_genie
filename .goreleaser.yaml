@@ -19,6 +19,7 @@ builds:
   - env:
       - CGO_ENABLED=0
       - GEMINI_API_KEY={{ .Env.GEMINI_API_KEY }}
+      - ENVIRONMENT=prod
     goos:
       - linux
       - windows
@@ -54,8 +55,8 @@ brews:
     description: "CLI app to suggest prompted commands"
     homepage: "https://github.com/the-Jinxist/cmd_genie"
     skip_upload: false
-    # post_install: |
-    #     cmd_genie --help
+    post_install: |
+        cmd_genie --help
     # tap:
     #   owner: the-Jinxist
     #   name: brew-genie

@@ -25,6 +25,10 @@ func GetGeminiAPIKey() string {
 	return config.GeminiAPIKey
 }
 
+func GetEnv() string {
+	return viper.GetString(EnvKey)
+}
+
 func LoadConfigs(path string) (Config, error) {
 
 	var (
@@ -37,7 +41,7 @@ func LoadConfigs(path string) (Config, error) {
 
 	viper.AutomaticEnv()
 
-	if viper.GetString(EnvKey) == "" {
+	if viper.GetString(EnvKey) != "prod" {
 
 		err = viper.ReadInConfig()
 		if err != nil {

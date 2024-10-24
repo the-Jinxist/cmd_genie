@@ -4,17 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 	"time"
 )
 
 type client struct {
-	APIKey     string
 	HttpClient *http.Client
 	log        *slog.Logger
 	BaseUrl    *url.URL
@@ -27,13 +24,9 @@ type client struct {
 	// Subscription     *Subscription
 }
 
-const BASE_URL = "https://generativelanguage.googleapis.com/"
+const BASE_URL = "https://harpenin.onrender.com/"
 
-func NewClient(apiKey string) *client {
-
-	if strings.TrimSpace(apiKey) == "" {
-		log.Fatalf("no api key installed")
-	}
+func NewClient() *client {
 
 	httpClient := &http.Client{
 		Timeout: 5 * time.Second,
@@ -42,7 +35,7 @@ func NewClient(apiKey string) *client {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	parsedUrl, _ := url.Parse(BASE_URL)
-	c := &client{APIKey: apiKey, HttpClient: httpClient, log: logger, BaseUrl: parsedUrl}
+	c := &client{HttpClient: httpClient, log: logger, BaseUrl: parsedUrl}
 	c.ChatCompletion = newChatCompletion(c)
 	return c
 }
@@ -63,8 +56,6 @@ func (c client) req(method string, url string, body interface{}, response interf
 	req, _ := http.NewRequest(method, reqUrl.String(), reqBody)
 	req.Header.Set("Content-Type", "application/json")
 
-	// fmt.Printf("reqUrl: %s, reqBody: %s, reqBody: %v\n", reqUrl, reqBody, req.Header)
-	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("error processing request - %+v", err)

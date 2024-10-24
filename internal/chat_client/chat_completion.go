@@ -1,7 +1,6 @@
 package chat_client
 
 import (
-	"fmt"
 	"net/http"
 	"runtime"
 )
@@ -17,63 +16,26 @@ func newChatCompletion(client *client) *ChatCompletion {
 	}
 }
 
-type GeminiRequest struct {
-	Contents []Contents `json:"contents"`
-}
-type Parts struct {
-	Text string `json:"text"`
-}
-type Contents struct {
-	Parts []Parts `json:"parts"`
+type CompletionRequest struct {
+	Prompt string `json:"prompt"`
+	Os     string `json:"os"`
 }
 
-type GeminiResponse struct {
-	Candidates    []Candidates  `json:"candidates"`
-	UsageMetadata UsageMetadata `json:"usageMetadata"`
+type CompletionResponse struct {
+	Message string `json:"message"`
+	Status  string `json:"status"`
 }
 
-type Content struct {
-	Parts []Parts `json:"parts"`
-	Role  string  `json:"role"`
-}
-type SafetyRatings struct {
-	Category    string `json:"category"`
-	Probability string `json:"probability"`
-}
-type Candidates struct {
-	Content       Content         `json:"content"`
-	FinishReason  string          `json:"finishReason"`
-	Index         int             `json:"index"`
-	SafetyRatings []SafetyRatings `json:"safetyRatings"`
-}
-type UsageMetadata struct {
-	PromptTokenCount     int `json:"promptTokenCount"`
-	CandidatesTokenCount int `json:"candidatesTokenCount"`
-	TotalTokenCount      int `json:"totalTokenCount"`
-}
-
-func (c ChatCompletion) GetChatCompletion(prompt string) (*GeminiResponse, error) {
+func (c ChatCompletion) GetChatCompletion(prompt string) (*CompletionResponse, error) {
 
 	os := runtime.GOOS
-	primer := fmt.Sprintf("You're a CLI savant with experience in naviagting CLIs on all operating system. Please provide succintly the cli command related to what the prompt needs. The OS is %s", os)
 
-	url := fmt.Sprintf("v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s", c.client.APIKey)
-	body := GeminiRequest{
-		Contents: []Contents{
-			{
-				Parts: []Parts{
-					{
-						Text: prompt,
-					},
-					{
-						Text: primer,
-					},
-				},
-			},
-		},
+	body := CompletionRequest{
+		Prompt: prompt,
+		Os:     os,
 	}
-	res := new(GeminiResponse)
-	err := c.client.req(http.MethodPost, url, body, res)
+	res := new(CompletionResponse)
+	err := c.client.req(http.MethodPost, "user/cmd_completion", body, res)
 
 	return res, err
 }

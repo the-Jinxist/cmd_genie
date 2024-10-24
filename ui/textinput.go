@@ -125,31 +125,14 @@ type successMsg string
 func makeAPICall(prompt string) tea.Cmd {
 
 	return func() tea.Msg {
-		client := chat_client.NewClient("AIzaSyBWBfXVQEvW3SIgE0Ztl6EaxJVTwoTnko4")
+		client := chat_client.NewClient()
 		resp, err := client.ChatCompletion.GetChatCompletion(prompt)
 
-		emptyState := successMsg("No command found in the matrix. please try a better prompt")
 		if err != nil {
 			return errMsg(err)
 		}
 
-		if resp != nil {
-			if len(resp.Candidates) == 0 {
-
-				return emptyState
-			}
-
-			cand := resp.Candidates[0]
-			if len(cand.Content.Parts) == 0 {
-
-				return emptyState
-			}
-
-			completion := cand.Content.Parts[0].Text
-			return successMsg(completion)
-		}
-
-		return emptyState
+		return successMsg(resp.Message)
 	}
 
 }

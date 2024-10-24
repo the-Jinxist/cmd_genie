@@ -29,7 +29,7 @@ const BASE_URL = "https://harpenin.onrender.com/"
 func NewClient() *client {
 
 	httpClient := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 90 * time.Second,
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))

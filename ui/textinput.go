@@ -111,7 +111,7 @@ func (m model) View() string {
 
 	if m.err != nil {
 		style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#000000")).Background(lipgloss.Color("#FF5733"))
-		res := fmt.Sprintf("Best suggestion: %s", m.completion)
+		res := fmt.Sprintf("Error occurred: %s", m.err.Error())
 
 		renderedRes := style.Render(res)
 		initStr += "\n" + renderedRes + "\n"

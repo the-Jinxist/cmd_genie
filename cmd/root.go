@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -36,6 +37,23 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+var shortHandSuggestion = &cobra.Command{
+	Use:     "get",
+	Short:   "Short-hand to get cli command suggestions without opening the text input",
+	Example: "cmd_genie get command to sign and create a git commit",
+	Args:    cobra.MinimumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		sentence := strings.Join(args, " ")
+
+		p := tea.NewProgram(ui.InitalLoadingModel(sentence))
+		if _, err := p.Run(); err != nil {
+			log.Fatal(err)
+		}
+
+		return nil
+	},
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -46,5 +64,5 @@ func Execute() {
 }
 
 func init() {
-	// rootCmd.AddCommand(suggestCommandCMD)
+	rootCmd.AddCommand(shortHandSuggestion)
 }

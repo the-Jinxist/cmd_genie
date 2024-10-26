@@ -25,6 +25,26 @@ type model struct {
 	completion       string
 }
 
+func InitalLoadingModel(prompt string) model {
+	ti := textinput.New()
+	ti.Placeholder = ""
+	ti.CharLimit = 300
+	ti.Width = 300
+	ti.SetValue(prompt)
+
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+
+	return model{
+		textInput:  ti,
+		spinner:    s,
+		err:        nil,
+		loading:    true,
+		completion: prompt,
+	}
+}
+
 func InitialModel() model {
 
 	ti := textinput.New()
@@ -45,6 +65,9 @@ func InitialModel() model {
 }
 
 func (m model) Init() tea.Cmd {
+	if m.loading {
+		return tea.Batch(m.spinner.Tick, makeAPICall(m.completion))
+	}
 	return tea.Batch(textinput.Blink, m.spinner.Tick)
 }
 
@@ -71,7 +94,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case errMsg:
 		m.err = msg
 		m.loading = false
-		return m, nil
+		return m, tea.Quit
 	case successMsg:
 		m.success = true
 		m.loading = false
@@ -103,17 +126,15 @@ func (m model) View() string {
 	if m.success {
 
 		style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#ffffff")).Background(lipgloss.Color("#89CFF0"))
-		res := fmt.Sprintf("Best suggestion: %s", m.completion)
 
-		renderedRes := style.Render(res)
+		renderedRes := style.Render(m.completion)
 		initStr += "\n" + renderedRes + "\n"
 	}
 
 	if m.err != nil {
 		style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color("#000000")).Background(lipgloss.Color("#FF5733"))
-		res := fmt.Sprintf("Error occurred: %s", m.err.Error())
 
-		renderedRes := style.Render(res)
+		renderedRes := style.Render("Sorry an error occurred. Please try again")
 		initStr += "\n" + renderedRes + "\n"
 	}
 

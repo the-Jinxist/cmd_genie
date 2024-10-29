@@ -85,6 +85,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			prompt := m.textInput.Value()
 			m.loading = true
 			m.success = false
+			m.textInput.Blur()
 			m.completion = ""
 
 			return m, makeAPICall(prompt)
@@ -94,10 +95,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case errMsg:
 		m.err = msg
 		m.loading = false
+		m.textInput.Blur()
 		return m, tea.Quit
 	case successMsg:
 		m.success = true
 		m.loading = false
+		m.textInput.Blur()
 		m.completion = string(msg)
 		return m, tea.Quit
 	}
